@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculatrice IRG Rappel Algérie - Version 1.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #006233 0%, #004d28 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 5px solid #d21034;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .content { padding: 30px; }
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #006233;
+        }
+        .section h3 { color: #2c3e50; margin-bottom: 15px; font-size: 16px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; border: 2px solid #e0e0e0;
+            border-radius: 8px; font-size: 14px; transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #006233; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .button-group { display: flex; gap: 15px; margin: 25px 0; }
+        .btn {
+            flex: 1; padding: 15px 30px; border: none; border-radius: 8px;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-calculate { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; }
+        .btn-calculate:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4); }
+        .btn-reset { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+        .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
+        .results {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white; padding: 25px; border-radius: 10px; margin-top: 20px;
+        }
+        .results h3 { margin-bottom: 20px; font-size: 20px; }
+        .result-item {
+            background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;
+            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .result-item:last-child { background: rgba(255,255,255,0.2); font-size: 18px; font-weight: bold; }
+        .result-label { font-size: 16px; }
+        .result-value { font-size: 18px; font-weight: bold; }
+        .error { background: #fee; color: #c33; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; }
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧮 Calculatrice IRG Rappel Algérie</h1>
+            <p>Version 1.0 - Développé par Bitout Abdelghani</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h3> Salaire Imposable</h3>
+                <div class="form-group">
+                    <label for="salaire">Salaire imposable (DA):</label>
+                    <input type="number" id="salaire" step="0.01" placeholder="Entrez le salaire imposable">
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📅 Type de Mensualisation</h3>
+                <div class="form-group">
+                    <label for="typeMensualisation">Type de mensualisation:</label>
+                    <select id="typeMensualisation">
+                        <option value="TARIF HORAIRE (173,33)">TARIF HORAIRE (173,33)</option>
+                        <option value="TARIF JOURNALIER DE 5 JOURS OUVRABLES (22J/MOIS)">TARIF JOURNALIER DE 5 JOURS OUVRABLES (22J/MOIS)</option>
+                        <option value="TARIF JOURNALIER DE 6 JOURS OUVRABLES (26J/MOIS)">TARIF JOURNALIER DE 6 JOURS OUVRABLES (26J/MOIS)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📉 Absences</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombreAbsence">Nombre d'absences:</label>
+                        <input type="number" id="nombreAbsence" step="0.01" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="uniteAbsence">Unité:</label>
+                        <select id="uniteAbsence">
+                            <option value="Heures">Heures</option>
+                            <option value="Jours">Jours</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3> Type de Travailleur</h3>
+                <div class="form-group">
+                    <label for="typeTravailleur">Catégorie:</label>
+                    <select id="typeTravailleur">
+                        <option value="Salarié ordinaire">Salarié ordinaire</option>
+                        <option value="Travailleur à besoins spécifiques (TABS)">Travailleur à besoins spécifiques (TABS)</option>
+                        <option value="Retraité">Retraité</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📊 Rappel sur Salaire (Article 128)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="montantRappel">Montant du rappel (DA):</label>
+                        <input type="number" id="montantRappel" step="0.01" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="nombreMois">Nombre de mois concernés:</label>
+                        <input type="number" id="nombreMois" step="1" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-calculate" onclick="calculer()">🧮 Calculer</button>
+                <button class="btn btn-reset" onclick="reinitialiser()">🔄 Réinitialiser</button>
+            </div>
+
+            <div class="results">
+                <h3>📈 Résultats</h3>
+                <div class="result-item">
+                    <span class="result-label">IRG Mensuel:</span>
+                    <span class="result-value" id="irgMensuel">0.00 DA</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">IRG Rappel:</span>
+                    <span class="result-value" id="irgRappel">0.00 DA</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">IRG Total:</span>
+                    <span class="result-value" id="irgTotal">0.00 DA</span>
+                </div>
+            </div>
+
+            <div class="error" id="errorMsg"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculerMensualisation() {
+            const typeMens = document.getElementById('typeMensualisation').value;
+            if (typeMens === "TARIF HORAIRE (173,33)") return 173.33333333333;
+            if (typeMens === "TARIF JOURNALIER DE 5 JOURS OUVRABLES (22J/MOIS)") return 21.66625;
+            if (typeMens === "TARIF JOURNALIER DE 6 JOURS OUVRABLES (26J/MOIS)") return 26.0;
+            return 0;
+        }
+
+        function calculerMensualisationHeures(h15) {
+            const typeMens = document.getElementById('typeMensualisation').value;
+            if (typeMens === "TARIF HORAIRE (173,33)") return h15;
+            if (typeMens === "TARIF JOURNALIER DE 5 JOURS OUVRABLES (22J/MOIS)") return h15 * 40 * 52 / 12 / 21.666625;
+            if (typeMens === "TARIF JOURNALIER DE 6 JOURS OUVRABLES (26J/MOIS)") return h15 * 40 * 52 / 12 / 26.0;
+            return 0;
+        }
+
+        function convertirAbsenceEnHeures(nombreAbsence, unite, h15, h16) {
+            const typeMens = document.getElementById('typeMensualisation').value;
+            if (typeMens === "TARIF HORAIRE (173,33)" || typeMens === "TARIF JOURNALIER DE 5 JOURS OUVRABLES (22J/MOIS)") {
+                return unite === "Heures" ? nombreAbsence : nombreAbsence * 8;
+            } else if (typeMens === "TARIF JOURNALIER DE 6 JOURS OUVRABLES (26J/MOIS)") {
+                return unite === "Heures" ? nombreAbsence : (h16 / h15) * nombreAbsence;
+            }
+            return 0;
+        }
+
+        function calculerBaremeIRG(revenuNet) {
+            let irg = 0;
+            irg += Math.min(revenuNet, 20000) * 0;
+            irg += Math.max(Math.min(revenuNet, 40000) - 20000, 0) * 0.23;
+            irg += Math.max(Math.min(revenuNet, 80000) - 40000, 0) * 0.27;
+            irg += Math.max(Math.min(revenuNet, 160000) - 80000, 0) * 0.30;
+            irg += Math.max(Math.min(revenuNet, 320000) - 160000, 0) * 0.33;
+            irg += Math.max(revenuNet - 320000, 0) * 0.35;
+            return irg;
+        }
+
+        function calculerPremierAbattement(irgBrut) {
+            const abattement = irgBrut * 0.40;
+            return Math.min(Math.max(abattement, 1000), 1500);
+        }
+
+        // CORRECTION APPLIQUÉE ICI : TABS et Retraités partagent la même formule
+        function calculerDeuxiemeAbattement(irgApresPremier, revenuNet, typeTravailleur) {
+            if (typeTravailleur === "Travailleur à besoins spécifiques (TABS)" || typeTravailleur === "Retraité") {
+                if (revenuNet <= 30000) return 0;
+                else if (revenuNet < 42500) return (irgApresPremier * (93/61)) - (81213/41);
+                else return irgApresPremier;
+            } else { // Salarié ordinaire
+                if (revenuNet <= 30000) return 0;
+                else if (revenuNet < 35000) return (irgApresPremier * (137/51)) - (27925/8);
+                else return irgApresPremier;
+            }
+        }
+
+        function arrondirDix(montant) {
+            return Math.floor(montant / 10) * 10;
+        }
+
+        function calculerIRGComplet(salaireImposable, h16, h22, typeTravailleur) {
+            const h18 = (salaireImposable / h22) * h16;
+            const h17 = arrondirDix(h18);
+            const h10 = calculerBaremeIRG(h17);
+            const h11 = calculerPremierAbattement(h10);
+            const h12 = Math.max(h10 - h11, 0);
+            const h13 = calculerDeuxiemeAbattement(h12, salaireImposable, typeTravailleur);
+            return (h22 * h13) / h16;
+        }
+
+        function calculer() {
+            try {
+                const salaire = parseFloat(document.getElementById('salaire').value);
+                const nombreAbs = parseFloat(document.getElementById('nombreAbsence').value) || 0;
+                const unite = document.getElementById('uniteAbsence').value;
+                const typeTrav = document.getElementById('typeTravailleur').value;
+                const rappel = parseFloat(document.getElementById('montantRappel').value) || 0;
+                const nbMois = parseInt(document.getElementById('nombreMois').value) || 0;
+
+                if (isNaN(salaire) || salaire <= 0) throw new Error("Veuillez saisir un salaire imposable valide");
+
+                const h15 = calculerMensualisation();
+                const h16 = calculerMensualisationHeures(h15);
+                const h20 = convertirAbsenceEnHeures(nombreAbs, unite, h15, h16);
+                const h22 = Math.max(0, h16 - h20);
+
+                const irgMensuel = calculerIRGComplet(salaire, h16, h22, typeTrav);
+                let irgRappel = 0;
+                let irgTotal = irgMensuel;
+
+                if (rappel > 0 && nbMois > 0) {
+                    const h26 = (rappel / nbMois) * 0.91;
+                    const h27 = salaire + h26;
+                    const h39 = (h27 * h16) / h22;
+                    const h40 = arrondirDix(h39);
+                    const irgBrutNouvelleBase = calculerBaremeIRG(h40);
+                    const abattement1 = calculerPremierAbattement(irgBrutNouvelleBase);
+                    const irgApresAbat1 = Math.max(irgBrutNouvelleBase - abattement1, 0);
+                    const irgApresAbat2 = calculerDeuxiemeAbattement(irgApresAbat1, h27, typeTrav);
+                    const h41 = (irgApresAbat2 / h16) * h22;
+                    const h42 = (h41 - irgMensuel) * nbMois;
+                    
+                    irgRappel = h42;
+                    irgTotal = irgMensuel + irgRappel;
+                }
+
+                document.getElementById('irgMensuel').textContent = irgMensuel.toFixed(2) + ' DA';
+                document.getElementById('irgRappel').textContent = irgRappel.toFixed(2) + ' DA';
+                document.getElementById('irgTotal').textContent = irgTotal.toFixed(2) + ' DA';
+                document.getElementById('errorMsg').style.display = 'none';
+
+            } catch (error) {
+                document.getElementById('errorMsg').textContent = 'Erreur: ' + error.message;
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        function reinitialiser() {
+            document.getElementById('salaire').value = '';
+            document.getElementById('nombreAbsence').value = '';
+            document.getElementById('montantRappel').value = '';
+            document.getElementById('nombreMois').value = '';
+            document.getElementById('typeMensualisation').selectedIndex = 0;
+            document.getElementById('uniteAbsence').selectedIndex = 0;
+            document.getElementById('typeTravailleur').selectedIndex = 0;
+            document.getElementById('irgMensuel').textContent = '0.00 DA';
+            document.getElementById('irgRappel').textContent = '0.00 DA';
+            document.getElementById('irgTotal').textContent = '0.00 DA';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculer();
+        });
+    </script>
+</body>
+</html>
